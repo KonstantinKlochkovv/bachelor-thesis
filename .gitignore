@@ -1,18 +1,36 @@
-/pops/
-/pkls/
-/Environments/
-/log_execution/
+# Игнорировать папки с определёнными названиями в любом месте проекта
+**/pops/
+**/pkls/
+**/Environments/
+**/log_execution/
+**/.ipynb_checkpoints/
+
+# Игнорировать файлы с определёнными расширениями
 *.ppl
 *.pkl
 *.npy
+*.prof
 
+# Игнорировать временные файлы TeX
+*.acn
+*.acr
+*.alg
 *.aux
+*.bbl
+*.bcf
+*.blg
+*.dvi
+*.glg
+*.glo
+*.gls
+*.glsdefs
+*.ist
 *.log
 *.out
-*.toc
+*.run.xml
 *.synctex.gz
-*.bbl
-*.blg
+*.toc
+*.xdv
 *.fdb_latexmk
 *.fls
 *.lof
@@ -20,5 +38,3 @@
 *.nav
 *.snm
 *.vrb
-*.xdv
-*.pdfsync
