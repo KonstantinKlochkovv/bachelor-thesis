@@ -1,10 +1,11 @@
-import concurrent.futures
 from covasim.tourist_layer import TourismParameters
 import covasim as cv
 import synthpops as sp
 import pickle
 import numpy as np
 import multiprocessing as mp
+from functools import partial
+import concurrent.futures
 
 duration = 150
 
@@ -14,17 +15,22 @@ labels = np.load('data/labels.npy', allow_pickle=True)
 cities_count = len(labels)
 
 
-def run_simulation(seed):
+def run_simulation(seed, start_city, beta):
     adjacency_matrix = np.load('data/flows.npy', allow_pickle=True)
 
     tourism_parameters = TourismParameters(adjacency_matrix = adjacency_matrix)
 
     sims = []
     for i in range(cities_count):
+        if i == start_city:
+            imports = 10
+        else:
+            imports = 0
+
         tp = cv.test_prob(symp_prob=0.2, start_day=0)
 
         sim = cv.Sim(pop_type='synthpops', rand_seed=seed, pop_size=sizes[i], interventions=tp,
-                            n_days=duration, variants=cv.variant(label=f'{scale}', variant={'rel_beta':scale}, days=0, n_imports=10), label=labels[i], verbose=-1)
+                            n_days=duration, variants=cv.variant(label='wild', variant={'rel_beta':beta}, days=0, n_imports=imports), pop_infected=0, label=labels[i], verbose=-1)
         sim.load_population(popfile=f"pops/{labels[i]}.ppl")
 
         sims.append(sim)
@@ -42,14 +48,12 @@ def run_simulation(seed):
 
 
 if __name__ == '__main__':
-    for scale in np.linspace(1,0.4,7):
-        for i in range(cities_count):
+    for beta in np.linspace(1,0.4,7):
+        for start_city in range(cities_count):
             num_processes = 3
-            imports = np.zeros(cities_count)
-            imports[i] = 10
             seeds = list(range(30))
 
             with concurrent.futures.ProcessPoolExecutor(max_workers=num_processes) as executor:
-                results = list(executor.map(run_simulation, seeds))
+                results = list(executor.map(partial(run_simulation, start_city=start_city, beta=beta), seeds))
 
-            np.save(f'pkls/{labels[i]}_{scale}.npy', np.array(results))
+            np.save(f'pkls/{labels[start_city]}_{beta}.npy', np.array(results))
