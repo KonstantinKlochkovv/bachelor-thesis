@@ -10,11 +10,11 @@ import concurrent.futures
 betas = np.linspace(1,0.5,6)
 flows = np.logspace(-2,-5,7)
 days = np.array([[150, 150, 150, 200, 200, 200, 200],
-        [150, 150, 150, 200, 200, 300, 300],
-        [200, 200, 200, 250, 250, 400, 400],
-        [200, 200, 200, 300, 300, 350, 350],
-        [300, 300, 300, 300, 300, 300, 300],
-        [400, 400, 400, 450, 450, 450, 450]])
+                [150, 150, 150, 200, 200, 300, 300],
+                [200, 200, 200, 250, 250, 400, 400],
+                [200, 200, 200, 300, 300, 350, 350],
+                [300, 300, 300, 300, 300, 300, 300],
+                [400, 400, 400, 450, 450, 450, 450]])
 
 
 
@@ -23,7 +23,7 @@ cities_count = 2
 
 def run_simulation(seed, beta, flow, duration):
     adjacency_matrix = np.array([[0, flow],
-                                  [flow, 0]])
+                                 [flow, 0]])
 
     tourism_parameters = TourismParameters(adjacency_matrix = adjacency_matrix)
 
@@ -35,7 +35,7 @@ def run_simulation(seed, beta, flow, duration):
             imports = 0
 
         sim = cv.Sim(pop_type='synthpops', rand_seed=seed, pop_size=1e5,
-                            n_days=duration, variants=cv.variant(label=f'{beta}', variant={'rel_beta':beta}, days=0, n_imports=imports), label=f"{i} city", verbose=-1)
+                            n_days=duration, variants=cv.variant(label='wild', variant={'rel_beta':beta}, days=0, n_imports=imports), pop_infected=0, label=f"{i} city", verbose=-1)
         sim.load_population(popfile=f"pops/100k.ppl")
 
         sims.append(sim)
