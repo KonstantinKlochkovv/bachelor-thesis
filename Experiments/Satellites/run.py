@@ -15,8 +15,10 @@ import synthpops as sp
 import pickle
 import numpy as np
 import multiprocessing as mp
+from functools import partial
+import concurrent.futures
 
-cites_count = 5
+cities_count = 5
 rand_seed = 0
 duration = 150
 big_size = 660000
@@ -31,12 +33,12 @@ pop_files = ['msk', 'mobl', 'mobl', 'mobl', 'mobl']
 imports = [10, 0, 0, 0, 0]
 
 
-def run_simulation(seed):
+def run_simulation(seed, start_city, start_day, multiplyer):
     adjacency_matrix = np.array([[0, flow_to_obl, flow_to_obl, flow_to_obl, flow_to_obl],
                                 [flow_to_msk, 0, flow_to_neighbour, flow_to_neighbour, flow_to_corner],
                                 [flow_to_msk, flow_to_neighbour, 0, flow_to_corner, flow_to_neighbour],
                                 [flow_to_msk, flow_to_neighbour, flow_to_corner, 0, flow_to_neighbour],
-                                [flow_to_msk, flow_to_corner, flow_to_neighbour, flow_to_corner, 0]])
+                                [flow_to_msk, flow_to_corner, flow_to_neighbour, flow_to_neighbour, 0]])
 
     tourism_parameters = TourismParameters(adjacency_matrix = adjacency_matrix,
                                         time_relax = 1,
@@ -47,33 +49,40 @@ def run_simulation(seed):
                                             'duration': 150, 
                                             'mult_coef': multiplyer,
                                             'to_city_index': j
-                                        } for j in range(cites_count) if j != i] for i in range(cites_count)})
+                                        } for j in range(cities_count) if j != i] for i in range(cities_count)})
 
     sims = []
-    for i in range(cites_count):
+    for i in range(cities_count):
+        if i == start_city:
+            imports = 10
+        else:
+            imports = 0
+            
         sim = cv.Sim(pop_type='synthpops', rand_seed=seed, pop_size=pop_sizes[i],
-                            n_days=duration, variants=cv.variant('wild', days=0, n_imports=imports[i]), label=f"{i} city", verbose=-1)
+                            n_days=duration, variants=cv.variant('wild', days=0, n_imports=imports), pop_infected=0, label=f"{i} city", verbose=-1)
         sim.load_population(popfile=f"pops/{pop_files[i]}.ppl")
 
         sims.append(sim)
 
     msim = cv.MultiSim(sims, tourism_parameters=tourism_parameters)
-    msim.run(n_cpus=cites_count)
+    msim.run(n_cpus=cities_count)
 
     return np.array([[msim.sims[i].results['new_infections'].values,
                       msim.sims[i].results['new_critical'].values,
-                      msim.sims[i].results['new_deaths'].values] for i in range(5)])
+                      msim.sims[i].results['new_deaths'].values] for i in range(cities_count)])
 
 
 
 
 if __name__ == '__main__':
-    for start_day in [10, 20, 30, 40, 50, 60, 70]:
-        for multiplyer in [0.1, 0.01]:
-            num_processes = 5
-            seeds = [i for i in range(30)]
+    for start_city in [0, 1]:
+        for start_day in [10, 20, 30, 40, 50, 60, 65, 70, 80, 90]:
+            for multiplyer in [0.1, 0.01]:
+                num_processes = 5
+                seeds = list(range(30))
 
-            with mp.Pool(processes=num_processes) as pool:
-                results = pool.map(run_simulation, seeds)
+                with concurrent.futures.ProcessPoolExecutor(max_workers=num_processes) as executor:
+                    results = list(executor.map(partial(run_simulation, start_city=start_city, start_day=start_day, multiplyer=multiplyer), seeds))
+            
 
-            np.save(f'pkls/0_{start_day}_{multiplyer}.npy', np.array(results))
+                np.save(f'pkls/{start_city}_all_{start_day}_{multiplyer}.npy', np.array(results))
