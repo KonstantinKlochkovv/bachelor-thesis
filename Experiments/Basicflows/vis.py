@@ -24,6 +24,69 @@ cities_count = 2
 
 colors = plt.cm.plasma(np.linspace(0, 0.8, cities_count))
 
+
+def filter_fliers(data):
+    return np.array([row for row in data if np.all(np.max(row, axis=1) > 100)])
+
+
+A4_WIDTH = 8.27  # Ширина A4
+A4_HEIGHT = 11.69/2.5  # Высота A4 (можно уменьшить, если нужно)
+fig, ax = plt.subplots(len(betas), len(flows), figsize=(A4_WIDTH, A4_HEIGHT), sharex=True, sharey=True)
+   
+
+for i,beta in enumerate(betas):
+    for j,flow in enumerate(flows):
+        data = filter_fliers(np.load(f'pkls/basicflows_{beta}_{flow}.npy')[:,:,0,:])
+
+        ax[i][j].plot(np.arange(data.shape[-1]), np.mean(data[:,0,:], axis=0), color=colors[0])
+        ax[i][j].fill_between(np.arange(data.shape[-1]), np.mean(data[:,0,:], axis=0)-np.std(data[:,0,:], axis=0), np.mean(data[:,0,:], axis=0)+np.std(data[:,0,:], axis=0), alpha=0.2, color=colors[0])
+        ax[i][j].plot(np.arange(data.shape[-1]), np.mean(data[:,1,:], axis=0), color=colors[1])
+        ax[i][j].fill_between(np.arange(data.shape[-1]), np.mean(data[:,1,:], axis=0)-np.std(data[:,1,:], axis=0), np.mean(data[:,1,:], axis=0)+np.std(data[:,1,:], axis=0), alpha=0.2, color=colors[1])
+        ax[i][j].tick_params(axis='both', which='major', labelsize=4)
+        ax[i][j].tick_params(axis='both', which='minor', labelsize=4)
+
+plt.tight_layout()
+plt.savefig('graphs/flows_epids.pdf')
+
+
+
+A4_WIDTH = 8.27  # Ширина A4
+A4_HEIGHT = 11.69/2.5  # Высота A4 (можно уменьшить, если нужно)
+fig, ax = plt.subplots(len(betas), len(flows), figsize=(A4_WIDTH, A4_HEIGHT))
+   
+
+for i,beta in enumerate(betas):
+    for j,flow in enumerate(flows):
+        data = filter_fliers(np.load(f'pkls/basicflows_{beta}_{flow}.npy')[:,:,0,:])
+
+        ax[i][j].hist(np.max(data[:,0,:], axis=1), alpha=0.5, color=colors[0], bins=30)
+        ax[i][j].hist(np.max(data[:,1,:], axis=1), alpha=0.5, color=colors[1], bins=30)
+        ax[i][j].tick_params(axis='both', which='major', labelsize=4)
+        ax[i][j].tick_params(axis='both', which='minor', labelsize=4)
+
+plt.tight_layout()
+plt.savefig('graphs/flows_hists_infs.pdf')
+
+
+A4_WIDTH = 8.27  # Ширина A4
+A4_HEIGHT = 11.69/2.5  # Высота A4 (можно уменьшить, если нужно)
+fig, ax = plt.subplots(len(betas), len(flows), figsize=(A4_WIDTH, A4_HEIGHT))
+   
+
+for i,beta in enumerate(betas):
+    for j,flow in enumerate(flows):
+        data = filter_fliers(np.load(f'pkls/basicflows_{beta}_{flow}.npy')[:,:,0,:])
+
+        ax[i][j].hist(np.argmax(data[:,0,:], axis=1), alpha=0.5, color=colors[0], bins=30)
+        ax[i][j].hist(np.argmax(data[:,1,:], axis=1), alpha=0.5, color=colors[1], bins=30)
+        ax[i][j].tick_params(axis='both', which='major', labelsize=4)
+        ax[i][j].tick_params(axis='both', which='minor', labelsize=4)
+
+plt.tight_layout()
+plt.savefig('graphs/flows_hists_day.pdf')
+
+
+
 A4_WIDTH = 8.27  # Ширина A4
 A4_HEIGHT = 11.69/2.5  # Высота A4 (можно уменьшить, если нужно)
 fig, ax = plt.subplots(len(betas), len(flows), figsize=(A4_WIDTH, A4_HEIGHT), sharex=True, sharey=True)
@@ -33,13 +96,18 @@ for i,beta in enumerate(betas):
     for j,flow in enumerate(flows):
         data = np.load(f'pkls/basicflows_{beta}_{flow}.npy')
 
-        ax[i][j].plot(np.arange(data.shape[-1]), np.mean(data[:,0,0,:], axis=0), color=colors[0])
-        ax[i][j].fill_between(np.arange(data.shape[-1]), np.mean(data[:,0,0,:], axis=0)-np.std(data[:,0,0,:], axis=0), np.mean(data[:,0,0,:], axis=0)+np.std(data[:,0,0,:], axis=0), alpha=0.2, color=colors[0])
-        ax[i][j].plot(np.arange(data.shape[-1]), np.mean(data[:,1,0,:], axis=0), color=colors[1])
-        ax[i][j].fill_between(np.arange(data.shape[-1]), np.mean(data[:,1,0,:], axis=0)-np.std(data[:,1,0,:], axis=0), np.mean(data[:,1,0,:], axis=0)+np.std(data[:,1,0,:], axis=0), alpha=0.2, color=colors[1])
+        infs1, infs2 = np.max(data[:,0,0,:], axis=1), np.max(data[:,1,0,:], axis=1)
+
+        c = 0
+        for k in range(len(infs1)):
+            if infs1[k] < 400 or infs2[k] < 400:
+                ax[i][j].plot(np.arange(data.shape[-1]), data[k,0,0,:], color=colors[0])
+                ax[i][j].plot(np.arange(data.shape[-1]), data[k,1,0,:], color=colors[1])
+                c+=1
+        # print(beta,flow,c/150)
 
 plt.tight_layout()
-plt.savefig('graphs/flows_epids.pdf')
+plt.savefig('graphs/flows_strange_epids.pdf')
 
 
 
@@ -49,12 +117,12 @@ t_stats_max = np.zeros((len(betas), len(flows)))
 
 for i,beta in enumerate(betas):
     for j,flow in enumerate(flows):
-        data = np.load(f'pkls/basicflows_{beta}_{flow}.npy')
+        data = filter_fliers(np.load(f'pkls/basicflows_{beta}_{flow}.npy')[:,:,0,:])
 
-        t_stat_day, p_value_day = sps.ttest_ind(np.argmax(data[:,1,0,:], axis=1), np.argmax(data[:,0,0,:], axis=1), equal_var=False)
+        t_stat_day, p_value_day = sps.ttest_ind(np.argmax(data[:,1,:], axis=1), np.argmax(data[:,0,:], axis=1), equal_var=False)
         t_stats_day[i,j] = t_stat_day
 
-        t_stat_max, p_value_max = sps.ttest_ind(np.max(data[:,1,0,:], axis=1), np.max(data[:,0,0,:], axis=1), equal_var=False)
+        t_stat_max, p_value_max = sps.ttest_ind(np.max(data[:,1,:], axis=1), np.max(data[:,0,:], axis=1), equal_var=False)
         t_stats_max[i,j] = t_stat_max
 
 
