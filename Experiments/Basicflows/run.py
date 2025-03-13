@@ -11,10 +11,10 @@ betas = np.linspace(1,0.5,6)
 flows = np.logspace(-2,-5,7)
 days = np.array([[150, 150, 150, 200, 200, 200, 200],
                 [150, 150, 150, 200, 200, 300, 300],
-                [200, 200, 200, 250, 250, 400, 400],
-                [200, 200, 200, 300, 300, 350, 350],
-                [300, 300, 300, 300, 300, 300, 300],
-                [400, 400, 400, 450, 450, 450, 450]])
+                [200, 200, 200, 250, 250, 400, 600],
+                [200, 200, 300, 300, 300, 350, 600],
+                [300, 300, 300, 300, 300, 600, 600],
+                [500, 500, 400, 450, 450, 900, 900]])
 
 
 
@@ -53,10 +53,13 @@ def run_simulation(seed, beta, flow, duration):
 if __name__ == '__main__':
     for i, beta in enumerate(betas):
         for j, flow in enumerate(flows):
-            num_processes = 15
-            seeds = list(range(30))
-            
-            with concurrent.futures.ProcessPoolExecutor(max_workers=num_processes) as executor:
-                results = list(executor.map(partial(run_simulation, beta=beta, flow=flow, duration=days[i,j]), seeds))
-            
-            np.save(f'pkls/basicflows_{beta}_{flow}.npy', np.array(results))
+            try:
+                np.load(f'pkls/basicflows_{beta}_{flow}.npy')
+            except:
+                num_processes = 15
+                seeds = list(range(30))
+                
+                with concurrent.futures.ProcessPoolExecutor(max_workers=num_processes) as executor:
+                    results = list(executor.map(partial(run_simulation, beta=beta, flow=flow, duration=days[i,j]), seeds))
+                
+                np.save(f'pkls/basicflows_{beta}_{flow}.npy', np.array(results))
