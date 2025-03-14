@@ -57,7 +57,7 @@ if __name__ == '__main__':
                 np.load(f'pkls/basicflows_{beta}_{flow}.npy')
             except:
                 num_processes = 15
-                seeds = list(range(30))
+                seeds = list(range(150))
                 
                 with concurrent.futures.ProcessPoolExecutor(max_workers=num_processes) as executor:
                     results = list(executor.map(partial(run_simulation, beta=beta, flow=flow, duration=days[i,j]), seeds))

@@ -38,15 +38,39 @@ for i,beta in enumerate(betas):
     for j,flow in enumerate(flows):
         data = filter_fliers(np.load(f'pkls/basicflows_{beta}_{flow}.npy')[:,:,0,:])
 
-        ax[i][j].plot(np.arange(data.shape[-1]), np.mean(data[:,0,:], axis=0), color=colors[0])
-        ax[i][j].fill_between(np.arange(data.shape[-1]), np.mean(data[:,0,:], axis=0)-np.std(data[:,0,:], axis=0), np.mean(data[:,0,:], axis=0)+np.std(data[:,0,:], axis=0), alpha=0.2, color=colors[0])
-        ax[i][j].plot(np.arange(data.shape[-1]), np.mean(data[:,1,:], axis=0), color=colors[1])
-        ax[i][j].fill_between(np.arange(data.shape[-1]), np.mean(data[:,1,:], axis=0)-np.std(data[:,1,:], axis=0), np.mean(data[:,1,:], axis=0)+np.std(data[:,1,:], axis=0), alpha=0.2, color=colors[1])
+        ax[i][j].plot(np.arange(data.shape[-1]), np.median(data[:,0,:], axis=0), color=colors[0])
+        ax[i][j].fill_between(np.arange(data.shape[-1]), np.median(data[:,0,:], axis=0)-np.std(data[:,0,:], axis=0), np.median(data[:,0,:], axis=0)+np.std(data[:,0,:], axis=0), alpha=0.2, color=colors[0])
+        ax[i][j].plot(np.arange(data.shape[-1]), np.median(data[:,1,:], axis=0), color=colors[1])
+        ax[i][j].fill_between(np.arange(data.shape[-1]), np.median(data[:,1,:], axis=0)-np.std(data[:,1,:], axis=0), np.median(data[:,1,:], axis=0)+np.std(data[:,1,:], axis=0), alpha=0.2, color=colors[1])
         ax[i][j].tick_params(axis='both', which='major', labelsize=4)
         ax[i][j].tick_params(axis='both', which='minor', labelsize=4)
+        ax[i][j].set_xlim(0,500)
 
 plt.tight_layout()
 plt.savefig('graphs/flows_epids.pdf')
+
+
+A4_WIDTH = 8.27  # Ширина A4
+A4_HEIGHT = 11.69/2.5  # Высота A4 (можно уменьшить, если нужно)
+fig, ax = plt.subplots(len(betas), len(flows), figsize=(A4_WIDTH, A4_HEIGHT), sharex=True, sharey=True)
+   
+
+for i,beta in enumerate(betas):
+    for j,flow in enumerate(flows):
+        data = filter_fliers(np.load(f'pkls/basicflows_{beta}_{flow}.npy')[:,:,0,:])
+
+        for row in data[:,1,:]:
+            ax[i][j].plot(np.arange(data.shape[-1]), row, color=colors[1], linewidth=1, alpha=0.01)
+        for row in data[:,0,:]:
+            ax[i][j].plot(np.arange(data.shape[-1]), row, color=colors[0], linewidth=1, alpha=0.01)
+        
+
+        ax[i][j].tick_params(axis='both', which='major', labelsize=4)
+        ax[i][j].tick_params(axis='both', which='minor', labelsize=4)
+        ax[i][j].set_xlim(0,500)
+
+plt.tight_layout()
+plt.savefig('graphs/flows_epids_lines.pdf')
 
 
 
@@ -100,7 +124,7 @@ for i,beta in enumerate(betas):
 
         c = 0
         for k in range(len(infs1)):
-            if infs1[k] < 400 or infs2[k] < 400:
+            if infs1[k] < 100 or infs2[k] < 100:
                 ax[i][j].plot(np.arange(data.shape[-1]), data[k,0,0,:], color=colors[0])
                 ax[i][j].plot(np.arange(data.shape[-1]), data[k,1,0,:], color=colors[1])
                 c+=1
