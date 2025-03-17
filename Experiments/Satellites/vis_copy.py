@@ -4,7 +4,7 @@ import seaborn as sns
 
 
 
-data = np.load('Results/pkls/1_10_0.01.npy')
+data = np.load('pkls/0_10_0.01.npy')
 
 # print(data)
 
@@ -19,7 +19,7 @@ for i in range(len(means)):
     ax.fill_between(np.arange(len(means[i])), means[i]-stds[i], means[i]+stds[i], alpha=0.2)
 ax.legend()
 ax.set_ylim(0,5000)
-plt.savefig('Results/pic1.pdf')
+plt.savefig('graphs/pic1.pdf')
 
 
 labels = ['Все потоки уменьшены в 10 раз', 'Все потоки уменьшены в 100 раз', 'Потоки сателлита уменьшены в 10 раз', 'Потоки сателлита уменьшены в 100 раз']
@@ -33,7 +33,7 @@ fig, ax = plt.subplots(2, 2, figsize=(A4_WIDTH, A4_HEIGHT), sharex=True)
 
 for i in range(4):
     experiment_id = 0
-    data = np.load(f'Results/pkls/1.npy')
+    data = np.load(f'pkls/1.npy')
     if i < 3:
         infs = np.max(np.sum(data[:,:,i,:], axis=1), axis=1)
     else:
@@ -43,11 +43,11 @@ for i in range(4):
 
     for all in [True, False]:
         for multiplyer in [0.01, 0.1]:
-            for start_day in [10, 20, 30, 40, 50, 60, 65, 70, 80, 90]:
+            for start_day in [10, 20, 30, 40, 50, 60, 70, 80, 90]:
                 if all:
-                    data = np.load(f'Results/pkls/1_all_{start_day}_{multiplyer}.npy')
+                    data = np.load(f'pkls/1_all_{start_day}_{multiplyer}.npy')
                 else:
-                    data = np.load(f'Results/pkls/1_{start_day}_{multiplyer}.npy')
+                    data = np.load(f'pkls/1_{start_day}_{multiplyer}.npy')
                 if i < 3:
                     infs = np.max(np.sum(data[:,:,i,:], axis=1), axis=1)
                 else:
@@ -71,7 +71,7 @@ for i in range(4):
 ax[1][0].legend(loc='upper center', bbox_to_anchor=(0.5, -0.3),
           fancybox=True, shadow=True)
 plt.tight_layout()
-plt.savefig('Results/hists1.pdf')
+plt.savefig('graphs/hists1.pdf')
 
 
 # # print(np.cumsum(data, axis=2))
