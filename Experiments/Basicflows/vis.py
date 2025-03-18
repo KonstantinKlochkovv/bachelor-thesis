@@ -69,6 +69,14 @@ for i,beta in enumerate(betas):
         ax[i][j].tick_params(axis='both', which='minor', labelsize=4)
         ax[i][j].set_xlim(0,500)
 
+for i,beta in enumerate(betas):
+    ax[i][0].set_ylabel(beta)
+
+for j,flow in enumerate(flows):
+    ax[-1][j].set_xlabel(round_to_first_significant(flow))
+
+fig.supylabel("Трансмиссивность")
+fig.supxlabel('Поток')
 plt.tight_layout()
 plt.savefig('graphs/flows_epids_lines.pdf')
 
@@ -88,6 +96,14 @@ for i,beta in enumerate(betas):
         ax[i][j].tick_params(axis='both', which='major', labelsize=4)
         ax[i][j].tick_params(axis='both', which='minor', labelsize=4)
 
+for i,beta in enumerate(betas):
+    ax[i][0].set_ylabel(beta)
+
+for j,flow in enumerate(flows):
+    ax[-1][j].set_xlabel(round_to_first_significant(flow))
+
+fig.supylabel("Трансмиссивность")
+fig.supxlabel('Поток')
 plt.tight_layout()
 plt.savefig('graphs/flows_hists_infs.pdf')
 
@@ -106,6 +122,14 @@ for i,beta in enumerate(betas):
         ax[i][j].tick_params(axis='both', which='major', labelsize=4)
         ax[i][j].tick_params(axis='both', which='minor', labelsize=4)
 
+for i,beta in enumerate(betas):
+    ax[i][0].set_ylabel(beta)
+
+for j,flow in enumerate(flows):
+    ax[-1][j].set_xlabel(round_to_first_significant(flow))
+
+fig.supylabel("Трансмиссивность")
+fig.supxlabel('Поток')
 plt.tight_layout()
 plt.savefig('graphs/flows_hists_day.pdf')
 
@@ -138,6 +162,7 @@ plt.savefig('graphs/flows_strange_epids.pdf')
 
 t_stats_day = np.zeros((len(betas), len(flows)))
 t_stats_max = np.zeros((len(betas), len(flows)))
+mean_delta_day = np.zeros((len(betas), len(flows)))
 
 for i,beta in enumerate(betas):
     for j,flow in enumerate(flows):
@@ -148,6 +173,8 @@ for i,beta in enumerate(betas):
 
         t_stat_max, p_value_max = sps.ttest_ind(np.max(data[:,1,:], axis=1), np.max(data[:,0,:], axis=1), equal_var=False)
         t_stats_max[i,j] = t_stat_max
+
+        mean_delta_day[i,j] = np.mean(np.argmax(data[:,1,:], axis=1) - np.argmax(data[:,0,:], axis=1))
 
 
 A4_WIDTH = 8.27  # Ширина A4
@@ -167,4 +194,24 @@ ax[1].set_xlabel("Поток")
 ax[1].set_title("t-статистики пика инфицирований")
 
 plt.tight_layout()
-plt.savefig('graphs/flows_heatmap.pdf')
+plt.savefig('graphs/flows_heatmap_thesis.pdf')
+
+
+A4_WIDTH = 8.27  # Ширина A4
+A4_HEIGHT = 8.27/2  # Высота A4 (можно уменьшить, если нужно)
+fig, ax = plt.subplots(1, 2, figsize=(A4_WIDTH, A4_HEIGHT), sharey=True)
+
+sns.heatmap(t_stats_day, annot=True, fmt=".1f", xticklabels=[round_to_first_significant(flow) for flow in flows], yticklabels=betas,
+            cmap="plasma", cbar_kws={'label': 't-статистика'}, ax=ax[0])
+
+sns.heatmap(mean_delta_day, annot=True, fmt=".1f", xticklabels=[round_to_first_significant(flow) for flow in flows], yticklabels=betas,
+            cmap="plasma", cbar_kws={'label': r'$\overline{\Delta t}$'}, ax=ax[1])
+
+ax[0].set_xlabel("Поток")
+ax[0].set_ylabel("Трансмиссивность")
+ax[0].set_title("t-статистики дня пика")
+ax[1].set_xlabel("Поток")
+ax[1].set_title("Средний сдвиг пика")
+
+plt.tight_layout()
+plt.savefig('graphs/flows_heatmap_conference.pdf')

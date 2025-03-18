@@ -386,37 +386,77 @@ S_{T_i}=1-\frac{V[E(Y|\bm{X}_{\sim i})]}{V(Y)}=1-\frac{y_B\cdot y_{C_i}-f_0^2}{y
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}{0.45\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{images/graph1.png}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.5\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{images/epid.pdf}
-    \end{subfigure}
-    \caption{Представление рассматриваемой модели транспортных потоков в системе большой город и сателлиты в виде графа (слева) и суммарное число новых ежедневных инфицирований в системе при моделировании в отсутствие ограничительных мер (справа).}
+    \includegraphics[width=0.4\linewidth]{images/graph1.png}
+    \caption{Представление рассматриваемой модели транспортных потоков в системе большой город и сателлиты в виде графа (слева).}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{images/boxs.pdf}
+    \begin{subfigure}{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/satellites_epid0.pdf}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{images/satellites_epid1.pdf}
+    \end{subfigure}
+    \caption{Суммарное число новых ежедневных инфицирований в системе при моделировании в отсутствие ограничительных мер при начале эпидемии в большом городе (слева) и в сателлите (справа).}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/satellites_boxs.pdf}
     \caption{Исследуемые метрики в различных городах системы в зависимости от места начала эпидемии (ограничительные меры отсутствуют)}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{images/hists.pdf}
+    \includegraphics[width=\linewidth]{images/satellites_hists0.pdf}
     \caption{Зависимости исследуемых метрик системы от дня введения ограничений на транспортные потоки и величины этих ограничений при начале эпидемии в центральном городе.}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{images/hists1.pdf}
+    \includegraphics[width=\linewidth]{images/satellites_hists1.pdf}
     \caption{Зависимости исследуемых метрик системы от дня введения ограничений на транспортные потоки и величины этих ограничений при начале эпидемии в городе-сателлите.}
 \end{figure}
 
 \cite{makhrova2017work}
+
+\subsection{Базовые потоки}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/flows_epids_lines.pdf}
+    \caption{Эпидемиологические кривые по результатам моделирования двух городов при разных трансмиссивностях инфекции и пассажиропотоках (на каждом графике 150 экспериментов).}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/flows_hists_day.pdf}
+    \caption{Гистограммы распределения дня пика инфицирований для двух городов (синяя соответствует городу начала эпидемии, оранжевая --- второму городу).}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/flows_hists_infs.pdf}
+    \caption{Гистограммы распределения пикового числа инфицирований для двух городов (синяя соответствует городу начала эпидемии, оранжевая --- второму городу).}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/flows_heatmap_thesis.pdf}
+    \caption{Тепловые карты t-статистик при сравнении метрик для двух городов (слева --- день пика инфицирований, справа --- пиковое число инфицирований).}
+\end{figure}
+
+\subsection{Индексы Соболя}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/flow_to_small_S1_index.pdf}
+    \caption{}
+\end{figure}
 
 \section{Выводы}
 \section{Благодарности}

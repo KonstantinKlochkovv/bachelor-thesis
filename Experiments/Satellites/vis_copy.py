@@ -4,7 +4,7 @@ import seaborn as sns
 
 
 
-data = np.load('pkls/0_10_0.01.npy')
+data = np.load('pkls/1.npy')
 
 # print(data)
 

@@ -23,7 +23,7 @@ for start in [0, 1]:
     ax.set_xlim(5,95)
     ax.set_ylabel('Число новых инфицирований')
     ax.set_xlabel('День')
-    plt.savefig(f'graphs/epid{start}.pdf')
+    plt.savefig(f'graphs/satellites_epid{start}.pdf')
 
 scales = [6, 1, 1, 1, 1]
 dt = [np.load(f'pkls/{i}.npy') for i in range(2)]
@@ -55,15 +55,16 @@ ax[0][1].legend_.remove()
 ax[1][0].legend_.remove() 
 ax[1][1].legend_.remove() 
 
-plt.savefig('graphs/boxs.pdf')
+plt.savefig('graphs/satellites_boxs.pdf')
 
-labels = ['Все потоки уменьшены в 10 раз', 'Все потоки уменьшены в 100 раз', 'Потоки крупного города уменьшены в 10 раз', 'Потоки крупного города уменьшены в 100 раз']
+labels = [['Все потоки уменьшены в 10 раз', 'Все потоки уменьшены в 100 раз', 'Потоки крупного города уменьшены в 10 раз', 'Потоки крупного города уменьшены в 100 раз'],
+          ['Все потоки уменьшены в 10 раз', 'Все потоки уменьшены в 100 раз', 'Потоки сателлита уменьшены в 10 раз', 'Потоки сателлита уменьшены в 100 раз']]
 y_labels = ['Пик зараженных', 'Пик критических', 'Пик мертвых', 'День пика инфицирований']
-colors = plt.cm.plasma(np.linspace(0, 1, len(labels)+1))
+colors = plt.cm.plasma(np.linspace(0, 1, len(labels[0])+1))
 
 for start in [0, 1]:
     A4_WIDTH = 8.27  # Ширина A4
-    A4_HEIGHT = 11.69/2.5  # Высота A4 (можно уменьшить, если нужно)
+    A4_HEIGHT = 11.69/2.3  # Высота A4 (можно уменьшить, если нужно)
     fig, ax = plt.subplots(2, 2, figsize=(A4_WIDTH, A4_HEIGHT), sharex=True)
 
     for i in range(4):
@@ -89,7 +90,7 @@ for start in [0, 1]:
                         infs = np.argmax(np.sum(data[:,:,0,:], axis=1), axis=1)
 
                     if start_day == 10:
-                        ax[i//2][i%2].errorbar(start_day + np.linspace(-1.5,1.5,4)[experiment_id], np.mean(infs), yerr=np.std(infs), capsize=5, fmt='.', color=colors[experiment_id], label=labels[experiment_id])
+                        ax[i//2][i%2].errorbar(start_day + np.linspace(-1.5,1.5,4)[experiment_id], np.mean(infs), yerr=np.std(infs), capsize=5, fmt='.', color=colors[experiment_id], label=labels[start][experiment_id])
                     else:
                         ax[i//2][i%2].errorbar(start_day + np.linspace(-1.5,1.5,4)[experiment_id], np.mean(infs), yerr=np.std(infs), capsize=5, fmt='.', color=colors[experiment_id])
                     # sns.kdeplot(infs, label=f'{start_day}_{multiplyer}')
@@ -99,8 +100,9 @@ for start in [0, 1]:
         ax[i//2][i%2].set_xlim(5,95)
         ax[i//2][i%2].set_xlabel('День введения мер')
         ax[i//2][i%2].set_ylabel(y_labels[i])
+        # ax[0,0].set_ylim(36000,38000)
 
     ax[1][0].legend(loc='upper center', bbox_to_anchor=(0.5, -0.3),
           fancybox=True, shadow=True)
     plt.tight_layout()
-    plt.savefig(f'graphs/hists{start}.pdf')
+    plt.savefig(f'graphs/satellites_hists{start}.pdf')
