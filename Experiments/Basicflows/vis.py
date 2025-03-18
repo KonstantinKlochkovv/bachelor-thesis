@@ -12,7 +12,7 @@ def round_to_first_significant(x):
                  
 
 betas = np.linspace(1,0.5,6)
-flows = np.logspace(-2,-5,7)
+flows = np.logspace(-2,-5,7)[::-1]
 days = np.array([[150, 150, 150, 200, 200, 200, 200],
         [150, 150, 150, 200, 200, 300, 300],
         [200, 200, 200, 250, 250, 400, 600],
