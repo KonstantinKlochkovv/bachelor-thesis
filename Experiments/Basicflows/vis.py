@@ -36,8 +36,10 @@ fig, ax = plt.subplots(len(betas), len(flows), figsize=(A4_WIDTH, A4_HEIGHT), sh
 
 for i,beta in enumerate(betas):
     for j,flow in enumerate(flows):
-        data = filter_fliers(np.load(f'pkls/basicflows_{beta}_{flow}.npy')[:,:,0,:])
-
+        data = np.load(f'pkls/basicflows_{beta}_{flow}.npy')[:,:,0,:]
+        # print(beta, flow, data.shape)
+        data = filter_fliers(data)
+        # print(beta, flow, data.shape)
         ax[i][j].plot(np.arange(data.shape[-1]), np.median(data[:,0,:], axis=0), color=colors[0])
         ax[i][j].fill_between(np.arange(data.shape[-1]), np.median(data[:,0,:], axis=0)-np.std(data[:,0,:], axis=0), np.median(data[:,0,:], axis=0)+np.std(data[:,0,:], axis=0), alpha=0.2, color=colors[0])
         ax[i][j].plot(np.arange(data.shape[-1]), np.median(data[:,1,:], axis=0), color=colors[1])
@@ -47,6 +49,7 @@ for i,beta in enumerate(betas):
         ax[i][j].set_xlim(0,500)
 
 plt.tight_layout()
+plt.savefig('graphs/flows_epids.png', dpi=600)
 plt.savefig('graphs/flows_epids.pdf')
 
 
@@ -57,8 +60,10 @@ fig, ax = plt.subplots(len(betas), len(flows), figsize=(A4_WIDTH, A4_HEIGHT), sh
 
 for i,beta in enumerate(betas):
     for j,flow in enumerate(flows):
-        data = filter_fliers(np.load(f'pkls/basicflows_{beta}_{flow}.npy')[:,:,0,:])
-
+        data = np.load(f'pkls/basicflows_{beta}_{flow}.npy')[:,:,0,:]
+        # print(beta, flow, data.shape)
+        data = filter_fliers(data)
+        # print(beta, flow, data.shape)
         for row in data[:,1,:]:
             ax[i][j].plot(np.arange(data.shape[-1]), row, color=colors[1], linewidth=1, alpha=0.01)
         for row in data[:,0,:]:
@@ -76,8 +81,10 @@ for j,flow in enumerate(flows):
     ax[-1][j].set_xlabel(round_to_first_significant(flow))
 
 fig.supylabel("Трансмиссивность")
-fig.supxlabel('Поток')
+fig.supxlabel('Транспортный поток (доля населения в день)')
+# plt.xlim(-5,10)
 plt.tight_layout()
+plt.savefig('graphs/flows_epids_lines.png', dpi=600)
 plt.savefig('graphs/flows_epids_lines.pdf')
 
 
@@ -103,8 +110,9 @@ for j,flow in enumerate(flows):
     ax[-1][j].set_xlabel(round_to_first_significant(flow))
 
 fig.supylabel("Трансмиссивность")
-fig.supxlabel('Поток')
+fig.supxlabel('Транспортный поток (доля населения в день)')
 plt.tight_layout()
+plt.savefig('graphs/flows_hists_infs.png', dpi=600)
 plt.savefig('graphs/flows_hists_infs.pdf')
 
 
@@ -131,6 +139,7 @@ for j,flow in enumerate(flows):
 fig.supylabel("Трансмиссивность")
 fig.supxlabel('Поток')
 plt.tight_layout()
+plt.savefig('graphs/flows_hists_day.png', dpi=600)
 plt.savefig('graphs/flows_hists_day.pdf')
 
 
@@ -155,6 +164,7 @@ for i,beta in enumerate(betas):
         # print(beta,flow,c/150)
 
 plt.tight_layout()
+plt.savefig('graphs/flows_strange_epids.png', dpi=600)
 plt.savefig('graphs/flows_strange_epids.pdf')
 
 
@@ -187,19 +197,20 @@ sns.heatmap(t_stats_day, annot=True, fmt=".1f", xticklabels=[round_to_first_sign
 sns.heatmap(t_stats_max, annot=True, fmt=".1f", xticklabels=[round_to_first_significant(flow) for flow in flows], yticklabels=betas,
             cmap="plasma", cbar_kws={'label': 't-статистика'}, ax=ax[1])
 
-ax[0].set_xlabel("Поток")
+ax[0].set_xlabel("Транспортный поток (доля населения в день)")
 ax[0].set_ylabel("Трансмиссивность")
 ax[0].set_title("t-статистики дня пика")
-ax[1].set_xlabel("Поток")
+ax[1].set_xlabel("Транспортный поток (доля населения в день)")
 ax[1].set_title("t-статистики пика инфицирований")
 
 plt.tight_layout()
+plt.savefig('graphs/flows_heatmap_thesis.png', dpi=600)
 plt.savefig('graphs/flows_heatmap_thesis.pdf')
 
 
 A4_WIDTH = 8.27  # Ширина A4
 A4_HEIGHT = 8.27/2  # Высота A4 (можно уменьшить, если нужно)
-fig, ax = plt.subplots(1, 2, figsize=(A4_WIDTH, A4_HEIGHT), sharey=True)
+fig, ax = plt.subplots(1, 2, figsize=(A4_WIDTH, A4_HEIGHT))
 
 sns.heatmap(t_stats_day, annot=True, fmt=".1f", xticklabels=[round_to_first_significant(flow) for flow in flows], yticklabels=betas,
             cmap="plasma", cbar_kws={'label': 't-статистика'}, ax=ax[0])
@@ -207,11 +218,48 @@ sns.heatmap(t_stats_day, annot=True, fmt=".1f", xticklabels=[round_to_first_sign
 sns.heatmap(mean_delta_day, annot=True, fmt=".1f", xticklabels=[round_to_first_significant(flow) for flow in flows], yticklabels=betas,
             cmap="plasma", cbar_kws={'label': r'$\overline{\Delta t}$'}, ax=ax[1])
 
-ax[0].set_xlabel("Поток")
+ax[0].set_xlabel("Транспортный поток (доля населения в день)")
 ax[0].set_ylabel("Трансмиссивность")
 ax[0].set_title("t-статистики дня пика")
-ax[1].set_xlabel("Поток")
+ax[1].set_xlabel("Транспортный поток (доля населения в день)")
+ax[1].set_ylabel("Трансмиссивность")
 ax[1].set_title("Средний сдвиг пика")
 
+plt.subplots_adjust(wspace=0.3, hspace=0.5)
 plt.tight_layout()
+plt.savefig('graphs/flows_heatmap_conference.png', dpi=600)
 plt.savefig('graphs/flows_heatmap_conference.pdf')
+
+
+A4_WIDTH = 8.27  # Ширина A4
+A4_HEIGHT = 8.27/2  # Высота A4 (можно уменьшить, если нужно)
+fig, ax = plt.subplots(1, 2, figsize=(A4_WIDTH, A4_HEIGHT))
+
+colors = plt.cm.plasma(np.linspace(0, 1, len(betas)))
+
+for i,beta in enumerate(betas):
+    ax[0].plot(flows, t_stats_day[i], 'o-', color=colors[i], label=f'{beta}')
+    ax[1].plot(flows, mean_delta_day[i], 'o', color=colors[i])
+
+    # slope, intercept, r_value, p_value, std_err = sps.linregress(np.log10(flows[2:]), t_stats_day[i][2:])
+    # ax[0].plot(flows, slope*np.log10(flows)+intercept, color=colors[i], linestyle='-', label=f'{beta}; $R^2 = {r_value**2:.3f}$')
+
+    slope, intercept, r_value, p_value, std_err = sps.linregress(np.log10(flows), mean_delta_day[i])
+    ax[1].plot(flows, slope*np.log10(flows)+intercept, color=colors[i], linestyle='-', label=f'{beta}; $R^2 = {r_value**2:.3f}$')
+
+
+
+ax[0].legend(title='Трансмиссивность')
+ax[0].set_xlabel('Транспортный поток (доля населения в день)')
+ax[0].set_ylabel('t-статистики дня пика')
+ax[0].set_xscale('log')
+
+ax[1].legend(title='Трансмиссивность')
+ax[1].set_xlabel('Транспортный поток (доля населения в день)')
+ax[1].set_ylabel('Средний сдвиг пика')
+ax[1].set_xscale('log')
+
+plt.subplots_adjust(wspace=0.3, hspace=0.5)
+plt.tight_layout()
+plt.savefig('graphs/flows_lines.png', dpi=600)
+plt.savefig('graphs/flows_lines.pdf')

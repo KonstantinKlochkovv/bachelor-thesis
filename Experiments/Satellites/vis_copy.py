@@ -3,23 +3,27 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
+for start_city in [0,1]:
+    data = np.load(f'pkls/{start_city}.npy')
 
-data = np.load('pkls/1.npy')
+    # print(data)
 
-# print(data)
+    # print(np.mean(data, axis=0)[:,0,:])
 
-# print(np.mean(data, axis=0)[:,0,:])
+    means = np.mean(data, axis=0)[:,0,:]
+    stds = np.std(data, axis=0)[:,0,:]
 
-means = np.mean(data, axis=0)[:,0,:]
-stds = np.std(data, axis=0)[:,0,:]
-
-fig, ax = plt.subplots()
-for i in range(len(means)):
-    ax.plot(np.arange(len(means[i])), means[i], label=i)
-    ax.fill_between(np.arange(len(means[i])), means[i]-stds[i], means[i]+stds[i], alpha=0.2)
-ax.legend()
-ax.set_ylim(0,5000)
-plt.savefig('graphs/pic1.pdf')
+    fig, ax = plt.subplots()
+    for i in range(len(means)):
+        ax.plot(np.arange(len(means[i])), means[i], label=i)
+        ax.fill_between(np.arange(len(means[i])), means[i]-stds[i], means[i]+stds[i], alpha=0.2)
+    ax.legend(title='Город')
+    ax.set_ylim(0,5000)
+    ax.set_xlabel('День')
+    ax.set_ylabel('Число новых инфицирований')
+    ax.set_title(f'Город начала эпидемии: {start_city}')
+    plt.savefig(f'graphs/pic{start_city}.png', dpi=600)
+    plt.savefig(f'graphs/pic{start_city}.pdf')
 
 
 labels = ['Все потоки уменьшены в 10 раз', 'Все потоки уменьшены в 100 раз', 'Потоки сателлита уменьшены в 10 раз', 'Потоки сателлита уменьшены в 100 раз']
