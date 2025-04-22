@@ -137,7 +137,7 @@ for j,flow in enumerate(flows):
     ax[-1][j].set_xlabel(round_to_first_significant(flow))
 
 fig.supylabel("Трансмиссивность")
-fig.supxlabel('Поток')
+fig.supxlabel("Транспортный поток (доля населения в день)")
 plt.tight_layout()
 plt.savefig('graphs/flows_hists_day.png', dpi=600)
 plt.savefig('graphs/flows_hists_day.pdf')
@@ -208,7 +208,7 @@ plt.savefig('graphs/flows_heatmap_thesis.png', dpi=600)
 plt.savefig('graphs/flows_heatmap_thesis.pdf')
 
 
-A4_WIDTH = 8.27  # Ширина A4
+A4_WIDTH = 1+8.27  # Ширина A4
 A4_HEIGHT = 8.27/2  # Высота A4 (можно уменьшить, если нужно)
 fig, ax = plt.subplots(1, 2, figsize=(A4_WIDTH, A4_HEIGHT))
 
@@ -225,7 +225,7 @@ ax[1].set_xlabel("Транспортный поток (доля населени
 ax[1].set_ylabel("Трансмиссивность")
 ax[1].set_title("Средний сдвиг пика")
 
-plt.subplots_adjust(wspace=0.3, hspace=0.5)
+plt.subplots_adjust(wspace=1, hspace=0)
 plt.tight_layout()
 plt.savefig('graphs/flows_heatmap_conference.png', dpi=600)
 plt.savefig('graphs/flows_heatmap_conference.pdf')
@@ -259,7 +259,7 @@ ax[1].set_xlabel('Транспортный поток (доля населени
 ax[1].set_ylabel('Средний сдвиг пика')
 ax[1].set_xscale('log')
 
-plt.subplots_adjust(wspace=0.3, hspace=0.5)
+plt.subplots_adjust(wspace=2, hspace=0)
 plt.tight_layout()
 plt.savefig('graphs/flows_lines.png', dpi=600)
 plt.savefig('graphs/flows_lines.pdf')

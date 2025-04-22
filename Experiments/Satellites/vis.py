@@ -17,7 +17,9 @@ for start in [0, 1]:
     means = np.mean(np.sum(data[:,:,0,:], axis=1), axis=0)
     stds = np.std(np.sum(data[:,:,0,:], axis=1), axis=0)
 
-    fig, ax = plt.subplots()
+    A4_WIDTH = 8.27/2  # Ширина A4
+    A4_HEIGHT = 11.69/3.5  # Высота A4 (можно уменьшить, если нужно)
+    fig, ax = plt.subplots(figsize=(A4_WIDTH, A4_HEIGHT))
 
     ax.plot(np.arange(len(means)), means, color=colors[0])
     ax.fill_between(np.arange(len(means)), means-stds, means+stds, alpha=0.2, color=colors[0])
@@ -25,6 +27,7 @@ for start in [0, 1]:
     ax.set_xlim(5,95)
     ax.set_ylabel('Число новых инфицирований')
     ax.set_xlabel('День')
+    plt.tight_layout()
     plt.savefig(f'graphs/satellites_epid{start}.png', dpi=600)
     plt.savefig(f'graphs/satellites_epid{start}.pdf')
 
@@ -36,7 +39,10 @@ infs = {'Город начала': [], 'Город': [], 'Max зараженны
 
 for i in range(2*cities_count):
     for seed in range(30):
-        infs['Город начала'].append(i//cities_count)
+        if i//cities_count == 0:
+            infs['Город начала'].append("Хаб")
+        else:
+            infs['Город начала'].append("Сателлит")
         infs['Город'].append(i%cities_count)
         # print(np.max(dt[i//cities_count][:,i%cities_count,0,:], axis=1))
         infs['Max зараженных'].append(np.max(dt[i//cities_count][:,i%cities_count,0,:], axis=1)[seed]/scales[i%cities_count])
@@ -46,8 +52,8 @@ for i in range(2*cities_count):
 
 
 A4_WIDTH = 8.27  # Ширина A4
-A4_HEIGHT = 11.69/2.5  # Высота A4 (можно уменьшить, если нужно)
-fig, ax = plt.subplots(2, 2, figsize=(A4_WIDTH, A4_HEIGHT), sharex=True)
+A4_HEIGHT = 11.69/1.5  # Высота A4 (можно уменьшить, если нужно)
+fig, ax = plt.subplots(2, 2, figsize=(A4_WIDTH, A4_HEIGHT))
    
 sns.boxplot(data=pd.DataFrame(infs), y='Max зараженных', x='Город', ax=ax[0][0], hue='Город начала', palette='plasma', linewidth=.75)
 sns.boxplot(data=pd.DataFrame(infs), y='Max критических', x='Город', ax=ax[0][1], hue='Город начала', palette='plasma', linewidth=.75)
@@ -69,11 +75,20 @@ for i in range(4):
         t_stat, p_value = sps.ttest_ind(infs_0, infs_1, equal_var=False)
         print(i, city, p_value, np.abs(np.mean(infs_0)-np.mean(infs_1)), np.abs(np.mean(infs_0)-np.mean(infs_1))/np.mean(infs_0))
         if p_value < 0.05:
-            ax[i//2][i%2].scatter(city, stars_coords[i], s=20, marker=(5, 2), color='black')
+            ax[i//2][i%2].scatter(city, stars_coords[i], s=20, marker=(5, 2), color=colors[2], label='$p < 0.05$')
 
+
+ax[0][0].legend(title='Город начала')
 ax[0][1].legend_.remove() 
 ax[1][0].legend_.remove() 
 ax[1][1].legend_.remove() 
+
+
+ax[0][0].set_xlim(0.5,4.5)
+ax[0][0].set_ylim(2800,3600)
+ax[0][1].set_xlim(0.5,4.5)
+ax[1][0].set_xlim(0.5,4.5)
+ax[1][1].set_xlim(0.5,4.5)
 
 plt.savefig('graphs/satellites_boxs.png', dpi=600)
 plt.savefig('graphs/satellites_boxs.pdf')
@@ -85,8 +100,8 @@ colors = plt.cm.plasma(np.linspace(0, 1, len(labels[0])+1))
 
 for start in [0, 1]:
     A4_WIDTH = 8.27  # Ширина A4
-    A4_HEIGHT = 11.69/1.5  # Высота A4 (можно уменьшить, если нужно)
-    fig, ax = plt.subplots(2, 2, figsize=(A4_WIDTH, A4_HEIGHT), sharex=True)
+    A4_HEIGHT = 11.69/1  # Высота A4 (можно уменьшить, если нужно)
+    fig, ax = plt.subplots(2, 2, figsize=(A4_WIDTH, A4_HEIGHT))
 
     for i in range(4):
         experiment_id = 0

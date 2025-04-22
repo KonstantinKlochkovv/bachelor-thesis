@@ -19,13 +19,13 @@ pop_sizes = [big_size, small_size, small_size, small_size, small_size]
 pop_files = ['msk', 'mobl', 'mobl', 'mobl', 'mobl']
 
 betas = np.linspace(1,0.5,6)
-flows = np.logspace(0,-4,5)
-days = np.array([[150, 150, 150, 200, 200],
-                [150, 150, 150, 200, 300],
-                [200, 200, 200, 250, 400],
-                [200, 200, 300, 300, 350],
-                [300, 300, 300, 300, 600],
-                [500, 500, 400, 450, 900]])
+flows = np.logspace(0,-4,9)
+days = np.array([[150, 150, 150, 200, 200, 400, 400, 400, 400],
+                [150, 250, 250, 200, 200, 400, 400, 600, 600],
+                [200, 250, 250, 300, 300, 500, 500, 600, 600],
+                [200, 250, 250, 300, 300, 600, 600, 600, 600],
+                [300, 300, 300, 400, 400, 600, 600, 900, 900],
+                [500, 500, 500, 600, 600, 900, 900, 900, 900]])
 
 def run_simulation(seed, pattern, beta, flow_multiplyer, duration):
     adjacency_matrix = flow_multiplyer * np.array([[0, flow_to_obl, flow_to_obl, flow_to_obl, flow_to_obl],
@@ -63,11 +63,13 @@ def run_simulation(seed, pattern, beta, flow_multiplyer, duration):
 
 
 if __name__ == '__main__':
-    for import_pattern in [0, 1, 'all']:
+    for import_pattern in [0, 1]:
         for i, beta in enumerate(betas):
             for j, flow in enumerate(flows):
                 try:
-                    np.load(f'pkls/diffsatellites_{import_pattern}_{beta}_{flow}.npy')
+                    data = np.load(f'pkls/diffsatellites_{import_pattern}_{beta}_{flow}.npy')
+                    if data.shape[-1] - 1 != days[i,j]:
+                        raise ValueError('Shape error')
                 except:
                     num_processes = 6
                     seeds = list(range(30))

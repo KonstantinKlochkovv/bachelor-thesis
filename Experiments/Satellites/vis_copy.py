@@ -6,24 +6,30 @@ import seaborn as sns
 for start_city in [0,1]:
     data = np.load(f'pkls/{start_city}.npy')
 
-    # print(data)
-
-    # print(np.mean(data, axis=0)[:,0,:])
-
+    A4_WIDTH = 8.27/1.5  # Ширина A4
+    A4_HEIGHT = 11.69/3  # Высота A4 (можно уменьшить, если нужно)
+    fig, ax = plt.subplots(figsize=(A4_WIDTH, A4_HEIGHT))
+ 
     means = np.mean(data, axis=0)[:,0,:]
     stds = np.std(data, axis=0)[:,0,:]
 
-    fig, ax = plt.subplots()
     for i in range(len(means)):
-        ax.plot(np.arange(len(means[i])), means[i], label=i)
+        if i == 0:
+            ax.plot(np.arange(len(means[i])), means[i], label='Хаб')
+        else:
+            ax.plot(np.arange(len(means[i])), means[i], label=f'Сателлит {i}')
         ax.fill_between(np.arange(len(means[i])), means[i]-stds[i], means[i]+stds[i], alpha=0.2)
     ax.legend(title='Город')
     ax.set_ylim(0,5000)
     ax.set_xlabel('День')
     ax.set_ylabel('Число новых инфицирований')
-    ax.set_title(f'Город начала эпидемии: {start_city}')
-    plt.savefig(f'graphs/pic{start_city}.png', dpi=600)
-    plt.savefig(f'graphs/pic{start_city}.pdf')
+    if start_city == 0:
+        ax.set_title(f'Начало в хабе')
+    else:
+        ax.set_title(f'Начало в сателлите 1')
+    plt.tight_layout()
+    plt.savefig(f'graphs/satellites_epids{start_city}.png', dpi=600)
+    plt.savefig(f'graphs/satellites_epids{start_city}.pdf')
 
 
 labels = ['Все потоки уменьшены в 10 раз', 'Все потоки уменьшены в 100 раз', 'Потоки сателлита уменьшены в 10 раз', 'Потоки сателлита уменьшены в 100 раз']
@@ -75,7 +81,7 @@ for i in range(4):
 ax[1][0].legend(loc='upper center', bbox_to_anchor=(0.5, -0.3),
           fancybox=True, shadow=True)
 plt.tight_layout()
-plt.savefig('graphs/hists1.pdf')
+# plt.savefig('graphs/hists1.pdf')
 
 
 # # print(np.cumsum(data, axis=2))
