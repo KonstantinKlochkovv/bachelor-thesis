@@ -4,12 +4,11 @@ import pickle
 import matplotlib.pyplot as plt
 
 population = 2e5
-max_sizes = np.arange(1e4, population, 1e4)
-captions = ['cum_infections',
-            'cum_deaths',
-            'max_new_infections',
-            'max_new_critical',
-            'time_peak_infections']
+max_sizes = np.arange(1e4, population, 2e4)
+captions = ['Cum инфицирования',
+            'Max инфицирований',
+            'День пика']
+inds = [0,2,4]
 
 colors = plt.cm.plasma(np.linspace(0, 0.8, 2))
 
@@ -41,8 +40,8 @@ with open('pkls/problem.pkl', 'rb') as file:
 
 
 A4_WIDTH = 8.27  # Ширина A4
-A4_HEIGHT = 11.69/2.5  # Высота A4 (можно уменьшить, если нужно)
-fig, ax = plt.subplots(2, 5, figsize=(A4_WIDTH, A4_HEIGHT))
+A4_HEIGHT = 11.69/2  # Высота A4 (можно уменьшить, если нужно)
+fig, ax = plt.subplots(2, 3, figsize=(A4_WIDTH, A4_HEIGHT))
 
 index = 'S1'
 for i in range(2):
@@ -50,15 +49,23 @@ for i in range(2):
         for big_size in max_sizes:
             data = np.load(f'pkls/bignsmall_{int(big_size)}.npy') 
 
-            indices = sobol.analyze(problem, data[:,k], calc_second_order=False)
-            ax[i][k].errorbar(x=big_size//1e4, y=indices[index][i], yerr=indices[f'{index}_conf'][i], color=colors[0], capsize=5, fmt='.', label=i)
+            indices = sobol.analyze(problem, data[:,inds[k]], calc_second_order=False)
+            ax[i][k].errorbar(x=big_size//10**3, y=indices[index][i], yerr=indices[f'{index}_conf'][i], color=colors[0], capsize=5, fmt='.')
 
-            indices = sobol.analyze(problem, data[:,k+len(captions)], calc_second_order=False)
-            ax[i][k].errorbar(x=big_size//1e4, y=indices[index][i], yerr=indices[f'{index}_conf'][i], color=colors[1], capsize=5, fmt='.', label=i)
+            indices = sobol.analyze(problem, data[:,inds[k]+5], calc_second_order=False)
+            ax[i][k].errorbar(x=big_size//10**3, y=indices[index][i], yerr=indices[f'{index}_conf'][i], color=colors[1], capsize=5, fmt='.')
 
             ax[i][k].set_title(f'{caption}')
 
-ax[0][0].set_ylabel('flow_to_small')
-ax[1][0].set_ylabel('flow_to_big')
+        ax[i][k].errorbar([],[], color=colors[0], capsize=5, fmt='.', label='Город начала')
+        ax[i][k].errorbar([],[], color=colors[1], capsize=5, fmt='.', label='Соседний город')
+
+        # ax[i][k].legend()
+ax[0][1].legend()
+ax[0][0].set_ylabel('Первый индекс Соболя \n потока из города начала')
+ax[1][0].set_ylabel('Первый индекс Соболя \n потока в город начала')
+# ax[1][0].legend(loc='upper center', bbox_to_anchor=(0.5, -0.3),
+#           fancybox=True, shadow=True)
+fig.supxlabel('Численность популяции города начала, тысяч')
 plt.tight_layout()
-plt.savefig(f'graphs/flow_to_small_S1_index.pdf')
+plt.savefig(f'graphs/bignsmall_bars.pdf')
