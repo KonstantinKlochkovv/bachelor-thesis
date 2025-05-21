@@ -34,8 +34,8 @@ for start in [0, 1]:
 scales = [6, 1, 1, 1, 1]
 dt = [np.load(f'pkls/{i}.npy') for i in range(2)]
 
-infs = {'Город начала': [], 'Город': [], 'Max зараженных': [], 'Max критических': [], 
-        'Max мертвых': [], 'День max инфицирований': []}
+infs = {'Город начала': [], 'Город': [], 'Максимальное число зараженных': [], 'Максимальное число критических': [], 
+        'Максимальное число мертвых': [], 'День пика инфицирований': []}
 
 for i in range(2*cities_count):
     for seed in range(30):
@@ -45,20 +45,20 @@ for i in range(2*cities_count):
             infs['Город начала'].append("Сателлит")
         infs['Город'].append(i%cities_count)
         # print(np.max(dt[i//cities_count][:,i%cities_count,0,:], axis=1))
-        infs['Max зараженных'].append(np.max(dt[i//cities_count][:,i%cities_count,0,:], axis=1)[seed]/scales[i%cities_count])
-        infs['Max критических'].append(np.max(dt[i//cities_count][:,i%cities_count,1,:], axis=1)[seed]/scales[i%cities_count])
-        infs['Max мертвых'].append(np.max(dt[i//cities_count][:,i%cities_count,2,:], axis=1)[seed]/scales[i%cities_count])
-        infs['День max инфицирований'].append(np.argmax(dt[i//cities_count][:,i%cities_count,0,:], axis=1)[seed])
+        infs['Максимальное число зараженных'].append(np.max(dt[i//cities_count][:,i%cities_count,0,:], axis=1)[seed]/scales[i%cities_count])
+        infs['Максимальное число критических'].append(np.max(dt[i//cities_count][:,i%cities_count,1,:], axis=1)[seed]/scales[i%cities_count])
+        infs['Максимальное число мертвых'].append(np.max(dt[i//cities_count][:,i%cities_count,2,:], axis=1)[seed]/scales[i%cities_count])
+        infs['День пика инфицирований'].append(np.argmax(dt[i//cities_count][:,i%cities_count,0,:], axis=1)[seed])
 
 
 A4_WIDTH = 8.27  # Ширина A4
 A4_HEIGHT = 11.69/1.5  # Высота A4 (можно уменьшить, если нужно)
 fig, ax = plt.subplots(2, 2, figsize=(A4_WIDTH, A4_HEIGHT))
    
-sns.boxplot(data=pd.DataFrame(infs), y='Max зараженных', x='Город', ax=ax[0][0], hue='Город начала', palette='plasma', linewidth=.75)
-sns.boxplot(data=pd.DataFrame(infs), y='Max критических', x='Город', ax=ax[0][1], hue='Город начала', palette='plasma', linewidth=.75)
-sns.boxplot(data=pd.DataFrame(infs), y='Max мертвых', x='Город', ax=ax[1][0], hue='Город начала', palette='plasma', linewidth=.75)
-sns.boxplot(data=pd.DataFrame(infs), y='День max инфицирований', x='Город', ax=ax[1][1], hue='Город начала', palette='plasma', linewidth=.75)
+sns.boxplot(data=pd.DataFrame(infs), y='Максимальное число зараженных', x='Город', ax=ax[0][0], hue='Город начала', palette='plasma', linewidth=.75)
+sns.boxplot(data=pd.DataFrame(infs), y='Максимальное число критических', x='Город', ax=ax[0][1], hue='Город начала', palette='plasma', linewidth=.75)
+sns.boxplot(data=pd.DataFrame(infs), y='Максимальное число мертвых', x='Город', ax=ax[1][0], hue='Город начала', palette='plasma', linewidth=.75)
+sns.boxplot(data=pd.DataFrame(infs), y='День пика инфицирований', x='Город', ax=ax[1][1], hue='Город начала', palette='plasma', linewidth=.75)
 
 stars_coords = [3500, 75, 35, 110]
 for i in range(4):
@@ -95,7 +95,7 @@ plt.savefig('graphs/satellites_boxs.pdf')
 
 labels = [['Все потоки уменьшены в 100 раз', 'Все потоки уменьшены в 10 раз', 'Потоки хаба уменьшены в 100 раз', 'Потоки хаба уменьшены в 10 раз'],
           ['Все потоки уменьшены в 100 раз', 'Все потоки уменьшены в 10 раз', 'Потоки сателлита уменьшены в 100 раз', 'Потоки сателлита уменьшены в 10 раз']]
-y_labels = ['Max зараженных', 'Max критических', 'Max мертвых', 'День max инфицирований']
+y_labels = ['Максимальное число зараженных', 'Максимальное число критических', 'Максимальное число мертвых', 'День пика инфицирований']
 colors = plt.cm.plasma(np.linspace(0, 1, len(labels[0])+1))
 
 for start in [0, 1]:
