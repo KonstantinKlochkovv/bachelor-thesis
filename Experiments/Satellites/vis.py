@@ -34,8 +34,8 @@ for start in [0, 1]:
 scales = [6, 1, 1, 1, 1]
 dt = [np.load(f'pkls/{i}.npy') for i in range(2)]
 
-infs = {'Город начала': [], 'Город': [], 'Максимальное число зараженных': [], 'Максимальное число критических': [], 
-        'Максимальное число мертвых': [], 'День пика инфицирований': []}
+infs = {'Город начала': [], 'Город': [], 'Максимальное число \nзараженных': [], 'Максимальное число \nкритических': [], 
+        'Максимальное число \nмертвых': [], 'День пика инфицирований': []}
 
 for i in range(2*cities_count):
     for seed in range(30):
@@ -45,19 +45,19 @@ for i in range(2*cities_count):
             infs['Город начала'].append("Сателлит")
         infs['Город'].append(i%cities_count)
         # print(np.max(dt[i//cities_count][:,i%cities_count,0,:], axis=1))
-        infs['Максимальное число зараженных'].append(np.max(dt[i//cities_count][:,i%cities_count,0,:], axis=1)[seed]/scales[i%cities_count])
-        infs['Максимальное число критических'].append(np.max(dt[i//cities_count][:,i%cities_count,1,:], axis=1)[seed]/scales[i%cities_count])
-        infs['Максимальное число мертвых'].append(np.max(dt[i//cities_count][:,i%cities_count,2,:], axis=1)[seed]/scales[i%cities_count])
+        infs['Максимальное число \nзараженных'].append(np.max(dt[i//cities_count][:,i%cities_count,0,:], axis=1)[seed]/scales[i%cities_count])
+        infs['Максимальное число \nкритических'].append(np.max(dt[i//cities_count][:,i%cities_count,1,:], axis=1)[seed]/scales[i%cities_count])
+        infs['Максимальное число \nмертвых'].append(np.max(dt[i//cities_count][:,i%cities_count,2,:], axis=1)[seed]/scales[i%cities_count])
         infs['День пика инфицирований'].append(np.argmax(dt[i//cities_count][:,i%cities_count,0,:], axis=1)[seed])
 
 
 A4_WIDTH = 8.27  # Ширина A4
-A4_HEIGHT = 11.69/1.5  # Высота A4 (можно уменьшить, если нужно)
+A4_HEIGHT = 11.69/2  # Высота A4 (можно уменьшить, если нужно)
 fig, ax = plt.subplots(2, 2, figsize=(A4_WIDTH, A4_HEIGHT))
    
-sns.boxplot(data=pd.DataFrame(infs), y='Максимальное число зараженных', x='Город', ax=ax[0][0], hue='Город начала', palette='plasma', linewidth=.75)
-sns.boxplot(data=pd.DataFrame(infs), y='Максимальное число критических', x='Город', ax=ax[0][1], hue='Город начала', palette='plasma', linewidth=.75)
-sns.boxplot(data=pd.DataFrame(infs), y='Максимальное число мертвых', x='Город', ax=ax[1][0], hue='Город начала', palette='plasma', linewidth=.75)
+sns.boxplot(data=pd.DataFrame(infs), y='Максимальное число \nзараженных', x='Город', ax=ax[0][0], hue='Город начала', palette='plasma', linewidth=.75)
+sns.boxplot(data=pd.DataFrame(infs), y='Максимальное число \nкритических', x='Город', ax=ax[0][1], hue='Город начала', palette='plasma', linewidth=.75)
+sns.boxplot(data=pd.DataFrame(infs), y='Максимальное число \nмертвых', x='Город', ax=ax[1][0], hue='Город начала', palette='plasma', linewidth=.75)
 sns.boxplot(data=pd.DataFrame(infs), y='День пика инфицирований', x='Город', ax=ax[1][1], hue='Город начала', palette='plasma', linewidth=.75)
 
 stars_coords = [3500, 75, 35, 110]
@@ -90,17 +90,18 @@ ax[0][1].set_xlim(0.5,4.5)
 ax[1][0].set_xlim(0.5,4.5)
 ax[1][1].set_xlim(0.5,4.5)
 
+plt.tight_layout()
 plt.savefig('graphs/satellites_boxs.png', dpi=600)
 plt.savefig('graphs/satellites_boxs.pdf')
 
 labels = [['Все потоки уменьшены в 100 раз', 'Все потоки уменьшены в 10 раз', 'Потоки хаба уменьшены в 100 раз', 'Потоки хаба уменьшены в 10 раз'],
           ['Все потоки уменьшены в 100 раз', 'Все потоки уменьшены в 10 раз', 'Потоки сателлита уменьшены в 100 раз', 'Потоки сателлита уменьшены в 10 раз']]
-y_labels = ['Максимальное число зараженных', 'Максимальное число критических', 'Максимальное число мертвых', 'День пика инфицирований']
+y_labels = ['Максимальное число \nзараженных', 'Максимальное число \nкритических', 'Максимальное число \nмертвых', 'День пика инфицирований']
 colors = plt.cm.plasma(np.linspace(0, 1, len(labels[0])+1))
 
 for start in [0, 1]:
     A4_WIDTH = 8.27  # Ширина A4
-    A4_HEIGHT = 11.69/1  # Высота A4 (можно уменьшить, если нужно)
+    A4_HEIGHT = 11.69/1.5  # Высота A4 (можно уменьшить, если нужно)
     fig, ax = plt.subplots(2, 2, figsize=(A4_WIDTH, A4_HEIGHT))
 
     for i in range(4):

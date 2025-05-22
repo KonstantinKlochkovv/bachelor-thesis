@@ -49,15 +49,15 @@ A4_HEIGHT = 8.27/2  # Высота A4 (можно уменьшить, если �
 fig, ax = plt.subplots(1, 2, figsize=(A4_WIDTH, A4_HEIGHT))
 
 sns.heatmap(t_stats, annot=True, fmt=".1f", xticklabels=[round_to_first_significant(flow) for flow in flows], yticklabels=betas,
-        cmap="plasma", ax=ax[0], cbar_kws={'label': 't-статистика'})
+        cmap="plasma", ax=ax[1], cbar_kws={'label': 't-статистика'})
 
 sns.heatmap(maes[1, :, :] - maes[0, :, :], annot=True, fmt=".3f", xticklabels=[round_to_first_significant(flow) for flow in flows], yticklabels=betas,
-        cmap="plasma", ax=ax[1], cbar_kws={'label': 'Среднее значение $\Delta$MAE/max'})
+        cmap="plasma", ax=ax[0], cbar_kws={'label': 'Среднее значение $\Delta$MAE/max'})
 
-ax[0].set_xlabel("Множитель транспортного потока")
-ax[0].set_ylabel("Трансмиссивность")
 ax[1].set_xlabel("Множитель транспортного потока")
 ax[1].set_ylabel("Трансмиссивность")
+ax[0].set_xlabel("Множитель транспортного потока")
+ax[0].set_ylabel("Трансмиссивность")
 
 plt.tight_layout()
 plt.savefig('graphs/diffsatellites_heatmaps.png', dpi=600)

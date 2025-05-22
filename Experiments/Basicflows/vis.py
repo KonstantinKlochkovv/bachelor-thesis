@@ -192,16 +192,16 @@ A4_HEIGHT = 8.27/2  # Высота A4 (можно уменьшить, если �
 fig, ax = plt.subplots(1, 2, figsize=(A4_WIDTH, A4_HEIGHT), sharey=True)
 
 sns.heatmap(t_stats_day, annot=True, fmt=".1f", xticklabels=[round_to_first_significant(flow) for flow in flows], yticklabels=betas,
-            cmap="plasma", cbar_kws={'label': 't-статистика'}, ax=ax[0])
-
-sns.heatmap(t_stats_max, annot=True, fmt=".1f", xticklabels=[round_to_first_significant(flow) for flow in flows], yticklabels=betas,
             cmap="plasma", cbar_kws={'label': 't-статистика'}, ax=ax[1])
 
-ax[0].set_xlabel("Транспортный поток (доля населения в день)")
-ax[0].set_ylabel("Трансмиссивность")
-ax[0].set_title("t-статистики дня пика")
+sns.heatmap(t_stats_max, annot=True, fmt=".1f", xticklabels=[round_to_first_significant(flow) for flow in flows], yticklabels=betas,
+            cmap="plasma", cbar_kws={'label': 't-статистика'}, ax=ax[0])
+
 ax[1].set_xlabel("Транспортный поток (доля населения в день)")
-ax[1].set_title("t-статистики пика инфицирований")
+ax[0].set_ylabel("Трансмиссивность")
+ax[1].set_title("t-статистики дня пика")
+ax[0].set_xlabel("Транспортный поток (доля населения в день)")
+ax[0].set_title("t-статистики пика инфицирований")
 
 plt.tight_layout()
 plt.savefig('graphs/flows_heatmap_thesis.png', dpi=600)
@@ -213,17 +213,17 @@ A4_HEIGHT = 8.27/2  # Высота A4 (можно уменьшить, если �
 fig, ax = plt.subplots(1, 2, figsize=(A4_WIDTH, A4_HEIGHT))
 
 sns.heatmap(t_stats_day, annot=True, fmt=".1f", xticklabels=[round_to_first_significant(flow) for flow in flows], yticklabels=betas,
-            cmap="plasma", cbar_kws={'label': 't-статистика'}, ax=ax[0])
+            cmap="plasma", cbar_kws={'label': 't-статистика'}, ax=ax[1])
 
 sns.heatmap(mean_delta_day, annot=True, fmt=".1f", xticklabels=[round_to_first_significant(flow) for flow in flows], yticklabels=betas,
-            cmap="plasma", cbar_kws={'label': r'$\overline{\Delta t}$'}, ax=ax[1])
+            cmap="plasma", cbar_kws={'label': r'$\overline{\Delta t}$'}, ax=ax[0])
 
-ax[0].set_xlabel("Транспортный поток (доля населения в день)")
-ax[0].set_ylabel("Трансмиссивность")
-ax[0].set_title("t-статистики дня пика")
 ax[1].set_xlabel("Транспортный поток (доля населения в день)")
 ax[1].set_ylabel("Трансмиссивность")
-ax[1].set_title("Средний сдвиг пика")
+ax[1].set_title("t-статистики дня пика")
+ax[0].set_xlabel("Транспортный поток (доля населения в день)")
+ax[0].set_ylabel("Трансмиссивность")
+ax[0].set_title("Средний сдвиг пика")
 
 plt.subplots_adjust(wspace=1, hspace=0)
 plt.tight_layout()
@@ -238,26 +238,26 @@ fig, ax = plt.subplots(1, 2, figsize=(A4_WIDTH, A4_HEIGHT))
 colors = plt.cm.plasma(np.linspace(0, 1, len(betas)))
 
 for i,beta in enumerate(betas):
-    ax[0].plot(flows, t_stats_day[i], 'o-', color=colors[i], label=f'{beta}')
-    ax[1].plot(flows, mean_delta_day[i], 'o', color=colors[i])
+    ax[1].plot(flows, t_stats_day[i], 'o-', color=colors[i], label=f'{beta}')
+    ax[0].plot(flows, mean_delta_day[i], 'o', color=colors[i])
 
     # slope, intercept, r_value, p_value, std_err = sps.linregress(np.log10(flows[2:]), t_stats_day[i][2:])
     # ax[0].plot(flows, slope*np.log10(flows)+intercept, color=colors[i], linestyle='-', label=f'{beta}; $R^2 = {r_value**2:.3f}$')
 
     slope, intercept, r_value, p_value, std_err = sps.linregress(np.log10(flows), mean_delta_day[i])
-    ax[1].plot(flows, slope*np.log10(flows)+intercept, color=colors[i], linestyle='-', label=f'{beta}; $R^2 = {r_value**2:.3f}$')
+    ax[0].plot(flows, slope*np.log10(flows)+intercept, color=colors[i], linestyle='-', label=f'{beta}; $R^2 = {r_value**2:.3f}$')
 
 
-
-ax[0].legend(title='Трансмиссивность')
-ax[0].set_xlabel('Транспортный поток (доля населения в день)')
-ax[0].set_ylabel('t-статистики дня пика')
-ax[0].set_xscale('log')
 
 ax[1].legend(title='Трансмиссивность')
 ax[1].set_xlabel('Транспортный поток (доля населения в день)')
-ax[1].set_ylabel('Средний сдвиг пика')
+ax[1].set_ylabel('t-статистики дня пика')
 ax[1].set_xscale('log')
+
+ax[0].legend(title='Трансмиссивность')
+ax[0].set_xlabel('Транспортный поток (доля населения в день)')
+ax[0].set_ylabel('Средний сдвиг пика')
+ax[0].set_xscale('log')
 
 plt.subplots_adjust(wspace=2, hspace=0)
 plt.tight_layout()
